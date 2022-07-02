@@ -16,33 +16,32 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         waitConfirmations: network.config.blockConfirmations || 1,
     })
 
-    log("Logging storage...")
-    for (let i = 0; i < 10; i++) {
-        log(
-            `Location ${i}: ${await ethers.provider.getStorageAt(
-                funWithStorage.address,
-                i
-            )}`
-        )
-    }
+    // log("Logging storage...")
+    // for (let i = 0; i < 10; i++) {
+    //     log(
+    //         `Location ${i}: ${await ethers.provider.getStorageAt(
+    //             funWithStorage.address,
+    //             i
+    //         )}`
+    //     )
+    // }
 
     // You can use this to trace!
-    // const trace = await network.provider.send("debug_traceTransaction", [
-    //     funWithStorage.transactionHash,
-    // ])
-    // for (structLog in trace.structLogs) {
-    //     if (trace.structLogs[structLog].op == "SSTORE") {
-    //         console.log(trace.structLogs[structLog])
-    //     }
-    // }
-    // const firstelementLocation = ethers.utils.keccak256(
-    //     "0x0000000000000000000000000000000000000000000000000000000000000002"
-    // )
-    // const arrayElement = await ethers.provider.getStorageAt(
-    //     funWithStorage.address,
-    //     firstelementLocation
-    // )
-    // log(`Location ${firstelementLocation}: ${arrayElement}`)
+    const trace = await network.provider.send("debug_traceTransaction", [
+        funWithStorage.transactionHash,
+    ])
+    for (structLog in trace.structLogs) {
+        if (trace.structLogs[structLog].op == "SSTORE") {
+            console.log(trace.structLogs[structLog])
+        }
+    }
+    let firstelementLocation = ethers.utils.keccak256(
+        "0x0000000000000000000000000000000000000000000000000000000000000002"
+    )
+    let arrayElement = await ethers.provider.getStorageAt(
+        funWithStorage.address,
+        firstelementLocation
+    )
 
     // Can you write a function that finds the storage slot of the arrays and mappings?
     // And then find the data in those slots?
